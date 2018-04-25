@@ -19,11 +19,10 @@ class DistanceCalculator {
      * @param one
      * @param two
      */
-    private double lpDisatnce(Instance one, Instance two) {
-    	int p = this.m_lpDistance;
+    private double lpDistance(Instance one, Instance two, int p) {
+    	
 		double sigma = 0;
-		int dimension = one .numAttributes() -1;
-		// calculate the p sigma
+		int dimension = one.numAttributes() -1;
 		for (int i=1; i < dimension; i++) {
 			sigma += Math.pow((one.value(i) - two.value(i)), p);
 		}
@@ -76,7 +75,7 @@ public class Knn implements Classifier {
      * @param instances
      */
     public void buildClassifier(Instances instances) throws Exception {
-
+    	
     }
 
     /**

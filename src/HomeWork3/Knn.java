@@ -19,7 +19,7 @@ class DistanceCalculator {
      * @param one
      * @param two
      */
-    private double lpDistance(Instance one, Instance two, int p) {
+    private double lpDistance(Instance one, Instance two, double p) {
     	
 		double sigma = 0;
 		int dimension = one.numAttributes() -1;
@@ -121,7 +121,7 @@ public class Knn implements Classifier {
     }
 
     /**
-     * Cacluates the average value of the given elements in the collection.
+     * Calculates the average value of the given elements in the collection.
      * @param
      * @return
      */

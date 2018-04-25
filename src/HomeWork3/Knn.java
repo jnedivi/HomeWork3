@@ -104,8 +104,10 @@ public class Knn implements Classifier {
      * Finds the k nearest neighbors.
      * @param instance
      */
-    public /* Collection of your choice */ findNearestNeighbors(Instance instance) {
-
+    public Instances findNearestNeighbors(Instance instance) {
+    	Instances instances = new Instances(m_trainingInstances);
+    	
+    	return instances;
     }
 
     /**

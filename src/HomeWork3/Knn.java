@@ -10,8 +10,13 @@ class DistanceCalculator {
     * We leave it up to you wheter you want the distance method to get all relevant
     * parameters(lp, efficient, etc..) or have it has a class variables.
     */
-    public double distance (Instance one, Instance two) {
-        return 0.0;
+    public double distance (Instance one, Instance two, double p) {
+    	if (Double.isInfinite(p)) {
+    		return lInfinityDistance(one,two);
+    	} else {
+    		return lpDistance(one, two, p);
+    	}
+    	
     }
 
     /**
@@ -19,7 +24,7 @@ class DistanceCalculator {
      * @param one
      * @param two
      */
-    private double lpDistance(Instance one, Instance two, int p) {
+    private double lpDistance(Instance one, Instance two, double p) {
     	
 		double sigma = 0;
 		int dimension = one.numAttributes() -1;
@@ -39,7 +44,15 @@ class DistanceCalculator {
      * @return
      */
     private double lInfinityDistance(Instance one, Instance two) {
-        return 0.0;
+        double max = 0;
+		int dimension = one.numAttributes() -1;
+        for (int i=1; i<dimension; i++) {
+        	double tmp = Math.abs(one.value(i)-two.value(i));
+        	if (max<tmp)
+        		max = tmp;
+        }
+        
+        return max;
     }
 
     /**

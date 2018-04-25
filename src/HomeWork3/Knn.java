@@ -20,6 +20,16 @@ class DistanceCalculator {
      * @param two
      */
     private double lpDisatnce(Instance one, Instance two) {
+    	int p = this.m_lpDistance;
+		double sigma = 0;
+		int dimension = one .numAttributes() -1;
+		// calculate the p sigma
+		for (int i=1; i < dimension; i++) {
+			sigma += Math.pow((one.value(i) - two.value(i)), p);
+		}
+		double lPDistance = Math.pow(sigma, (double) 1/p);
+		//System.out.println(lPDistance);
+		return lPDistance;
         return 0.0;
     }
 

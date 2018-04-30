@@ -103,7 +103,7 @@ class DistanceCalculator {
 	 
 	 double sigma = 0;
 	 int dimension = one.numAttributes() - 1;
-	 double threshold = Double.MAX_VALUE;
+	 //double threshold = Double.MAX_VALUE;
 	 
 	 for (int i=0; i < dimension; i++) {
 		   sigma += Math.abs(Math.pow((one.value(i) - two.value(i)), p));
@@ -241,9 +241,15 @@ public class Knn implements Classifier {
   */
 
  public double calcAvgError(Instances instances) {
+		double totalAmountOfMistakes = 0;
+		
+		for (int i = 0; i < instances.numInstances(); i++) {
+			if(this.classifyInstance(instances.get(i)) != instances.get(i).classValue()){
+				totalAmountOfMistakes++;
+			}
+		}
 
-  return 0.0;
-
+		return totalAmountOfMistakes / instances.numInstances();
  }
 
 
@@ -257,7 +263,34 @@ public class Knn implements Classifier {
 
  public double crossValidationError(Instances instances, int num_of_folds) {
 
-  return 0.0;
+		Random random = new Random();
+		instances.randomize(random);
+		double sumOfErrors = 0;
+		Instances[] folds = GetFolds(instances, num_of_folds); 
+		
+		
+		for(int i = 0; i < folds.length; i++){
+			
+			Instances validationSet = folds[i];
+			Instances trainingSet = new Instances(instances , 0 ,0);
+			
+			for (int j = 0; j < folds.length; j++) {
+				if( j != i){
+					trainingSet.addAll(folds[j]);
+				} 
+			}
+		
+			
+			m_trainingInstances = trainingSet;
+			double averageErrorOfCurrentFolds = this.calcAverageError(validationSet);
+		
+			sumOfErrors += averageErrorOfCurrentFolds;
+			
+		}
+		
+		sumOfErrors /= num_of_folds;
+
+		return sumOfErrors;
 
  }
 
@@ -272,13 +305,34 @@ public class Knn implements Classifier {
 
  public Instances findNearestNeighbors(Instance instance) {
 
-  Instances instances = new Instances(m_trainingInstances);
+    Instances instances = new Instances(m_trainingInstances);
 
+    Instances allInstances = new Instances(this.m_trainingInstances.numInstances());
+	
+	for (int i = 0; i < allInstances.length; i++) {
+		
+		allInstances.add(i, this.m_trainingInstances.get(i));
+		
+	}
+	
+	double[] distances = new double[m_trainingInstances.numInstances()];
+	
+	if( m_k > m_trainingInstances.numInstances() ){
+		return allInstances; 
+	}
 
-
+	for (int i = 0; i < m_trainingInstances.numInstances(); i++) {
+		double currentDistance = distance( i_Instance , m_trainingInstances.get(i));
+		distances[i] = currentDistance;
+	}
+	
+	sortArray(distances , allInstances );
+	
+	for (int i = 0; i < neighbors.length; i++) {
+		instances.add(i, allInstances.get(i));
+	}
+	
   return instances;
-
-
 
  }
 
@@ -290,9 +344,9 @@ public class Knn implements Classifier {
   * @return
   */
 
- public double getAverageValue(Instances dataSet, Instance instance) {
+ public double getAverageValue(Instances dataSet) {
 
-  return 0.0;
+  return dataSet.meanOrMode(dataSet.classAttribute());
 
  }
 
@@ -306,8 +360,29 @@ public class Knn implements Classifier {
 
  public double getWeightedAverageValue(Instances dataSet, Instance instance) {
 
-  return 0.0;
-
+     double avg = 0;
+     DistanceCalculator d_C = new DistanceCalculator();
+     
+     double distance = 0;
+     double sumOfDistances = 0;
+     double sumOfWeights = 0;
+     double w_i = 0;
+     
+     for (int i = 0; i < dataSet.numInstances(); i++) {
+    	 Instance neighbor = dataSet.get(i);
+    	 
+         distance = distanceCalculator.distance(neighbor, instance, distanceMethod);
+         if (distance == 0) {
+             return neighbor.classValue();
+         }
+         w_i = 1.0 / Math.pow(distance, 2);
+         if (w_i > 0) {
+             sumOfDistances += w_i;
+             sumsumOfWeights += w_i * neighbor.classValue();
+         }
+     }
+     average = sumsumOfWeights / sumOfDistances;
+     return average;
  }
 
 
@@ -347,5 +422,24 @@ public class Knn implements Classifier {
   return 0.0;
 
  }
+ 
+private void sortArray(double[] dist , Instances instances) {
+		
+		double temp = 0;
+		for (int i = 0; i < dist.length; i++) {
+			for (int j = 1; j < dist.length - i; j++) {
+				if(dist[j -1] > dist[j]){
+					// swap distance data
+					temp = dist[j - 1];
+					dist[j - 1] = dist[j];
+					dist[j] = temp;	
+					//swap instances
+					Instance tempInstance = instances.get(j - 1);
+					instances.add(j - 1, instances.get(j));
+					instances.add(j, tempInstance);
+				}	
+			}
+		}
+	}
 
 }

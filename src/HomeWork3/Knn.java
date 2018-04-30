@@ -22,29 +22,21 @@ class DistanceCalculator {
  public double distance(Instance one, Instance two, double p) {
 
   if (Double.isInfinite(p)) {
-
+	  
    return lInfinityDistance(one, two);
-
   } else {
-
    return lpDistance(one, two, p);
-
+   
   }
-
-
 
  }
 
 
 
  /**
-
   * Returns the Lp distance between 2 instances.
-
   * @param one
-
   * @param two
-
   */
 
  private double lpDistance(Instance one, Instance two, double p) {
@@ -74,15 +66,10 @@ class DistanceCalculator {
 
 
  /**
-
   * Returns the L infinity distance between 2 instances.
-
   * @param one
-
   * @param two
-
   * @return
-
   */
 
  private double lInfinityDistance(Instance one, Instance two) {
@@ -101,8 +88,6 @@ class DistanceCalculator {
 
   }
 
-
-
   return max;
 
  }
@@ -110,15 +95,10 @@ class DistanceCalculator {
 
 
  /**
-
   * Returns the Lp distance between 2 instances, while using an efficient distance check.
-
   * @param one
-
   * @param two
-
   * @return
-
   */
 
  private double efficientLpDistance(Instance one, Instance two, double p) {
@@ -142,15 +122,10 @@ class DistanceCalculator {
 
 
  /**
-
   * Returns the Lp distance between 2 instances, while using an efficient distance check.
-
   * @param one
-
   * @param two
-
   * @return
-
   */
 
  private double efficientLInfinityDistance(Instance one, Instance two) {
@@ -222,13 +197,9 @@ public class Knn implements Classifier {
  @Override
 
  /**
-
   * Build the knn classifier. In our case, simply stores the given instances for
-
   * later use in the prediction.
-
   * @param instances
-
   */
 
  public void buildClassifier(Instances instances) throws Exception {
@@ -240,13 +211,9 @@ public class Knn implements Classifier {
 
 
  /**
-
   * Returns the knn prediction on the given instance.
-
   * @param instance
-
   * @return The instance predicted value.
-
   */
 
  public double regressionPrediction(Instance instance) {
@@ -268,17 +235,11 @@ public class Knn implements Classifier {
 
 
  /**
-
   * Caclcualtes the average error on a give set of instances.
-
   * The average error is the average absolute error between the target value and the predicted
-
   * value across all insatnces.
-
   * @param insatnces
-
   * @return
-
   */
 
  public double calcAvgError(Instances instances) {
@@ -290,15 +251,10 @@ public class Knn implements Classifier {
 
 
  /**
-
   * Calculates the cross validation error, the average error on all folds.
-
   * @param insances Insances used for the cross validation
-
   * @param num_of_folds The number of folds to use.
-
   * @return The cross validation error.
-
   */
 
  public double crossValidationError(Instances instances, int num_of_folds) {

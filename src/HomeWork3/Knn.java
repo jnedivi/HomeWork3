@@ -120,20 +120,20 @@ public class Knn implements Classifier {
     public double regressionPrediction(Instance instance) {
     	
     	if(m_WeightingScheme.equals(WeightingScheme.Uniform)){
-    		return getAverageValue(m_trainingInstances);
+    		return getAverageValue(m_trainingInstances, instance);
     	}else{
-    		return getWeightedAverageValue(m_trainingInstances);
+    		return getWeightedAverageValue(m_trainingInstances, instance);
     	}
     }
 
     /**
-     * Caclcualtes the average error on a give set of instances.
+     * Calculates the average error on a give set of instances.
      * The average error is the average absolute error between the target value and the predicted
      * value across all insatnces.
      * @param insatnces
      * @return
      */
-    public double calcAvgError (Instances insatnces){
+    public double calcAvgError (Instances instances){
         return 0.0;
     }
 
@@ -164,7 +164,7 @@ public class Knn implements Classifier {
      * @param
      * @return
      */
-    public double getAverageValue (Instances dataSet) {
+    public double getAverageValue (Instances dataSet, Instance instance) {
         return 0.0;
     }
 
@@ -173,7 +173,7 @@ public class Knn implements Classifier {
      * with respect to their distance from a specific instance.
      * @return
      */
-    public double getWeightedAverageValue(Instances dataSet) {
+    public double getWeightedAverageValue(Instances dataSet, Instance instance) {
         return 0.0;
     }
 

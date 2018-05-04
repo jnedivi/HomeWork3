@@ -17,17 +17,17 @@ class DistanceCalculator {
   * parameters(lp, efficient, etc..) or have it has a class variables.
   */
 
- public double distance(Instance one, Instance two, double p) {
+	public double distance(Instance one, Instance two, double p) {
 
-  if (Double.isInfinite(p)) {
-	  
-   return lInfinityDistance(one, two);
-  } else {
-   return lpDistance(one, two, p);
-   
-  }
+		if (Double.isInfinite(p)) {
 
- }
+			return lInfinityDistance(one, two);
+		} else {
+			return lpDistance(one, two, p);
+
+		}
+
+	}
 
 
 
@@ -39,25 +39,20 @@ class DistanceCalculator {
 
  private double lpDistance(Instance one, Instance two, double p) {
 
+	 double sigma = 0;
 
+	 int dimension = one.numAttributes() - 1;
 
-  double sigma = 0;
+	 for (int i = 1; i < dimension; i++) {
 
-  int dimension = one.numAttributes() - 1;
+		 sigma += Math.abs(Math.pow((one.value(i) - two.value(i)), p));
+	 }
 
-  for (int i = 1; i < dimension; i++) {
+	 double lPDistance = Math.pow(sigma, (double) 1 / p);
 
-   sigma += Math.abs(Math.pow((one.value(i) - two.value(i)), p));
+	 //System.out.println(lPDistance);
 
-  }
-
-  double lPDistance = Math.pow(sigma, (double) 1 / p);
-
-  //System.out.println(lPDistance);
-
-  return lPDistance;
-
-
+	 return lPDistance;
 
  }
 

@@ -42,7 +42,7 @@ public class MainHW3 {
 				double currentLpDistance = lpValues[i];
 				for(int j = 0; j < weightingSchemes.length; j++){
 					Knn knn = new Knn();
-					knn.
+					
 				}
 			}
 		}

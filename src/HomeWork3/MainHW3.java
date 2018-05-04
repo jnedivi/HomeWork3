@@ -50,6 +50,15 @@ public class MainHW3 {
 	}
 	public static void main(String[] args) throws Exception {
         //TODO: complete the Main method
+		Instances trainingData = loadData("auto_price.txt");
+		trainData.randomize(new Random());
+		
+		// first we scale the data
+		FeatureScaler featureScaler = new FeatureScaler();
+		trainingData  = featureScaler.scaleData(trainingData);
+		
+		
+		
 	}
 
 }

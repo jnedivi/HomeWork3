@@ -12,10 +12,10 @@ import weka.core.Instances;
 
 class DistanceCalculator {
 
- /**
-  * We leave it up to you wheter you want the distance method to get all relevant
-  * parameters(lp, efficient, etc..) or have it has a class variables.
-  */
+	/**
+	 * We leave it up to you wheter you want the distance method to get all relevant
+	 * parameters(lp, efficient, etc..) or have it has a class variables.
+	 */
 
 	public double distance(Instance one, Instance two, double p) {
 
@@ -31,113 +31,110 @@ class DistanceCalculator {
 
 
 
- /**
-  * Returns the Lp distance between 2 instances.
-  * @param one
-  * @param two
-  */
+	/**
+	 * Returns the Lp distance between 2 instances.
+	 * @param one
+	 * @param two
+	 */
 
- private double lpDistance(Instance one, Instance two, double p) {
+	private double lpDistance(Instance one, Instance two, double p) {
 
-	 double sigma = 0;
+		double sigma = 0;
 
-	 int dimension = one.numAttributes() - 1;
+		int dimension = one.numAttributes() - 1;
 
-	 for (int i = 1; i < dimension; i++) {
+		for (int i = 1; i < dimension; i++) {
 
-		 sigma += Math.abs(Math.pow((one.value(i) - two.value(i)), p));
-	 }
+			sigma += Math.abs(Math.pow((one.value(i) - two.value(i)), p));
+		}
 
-	 double lPDistance = Math.pow(sigma, (double) 1 / p);
+		double lPDistance = Math.pow(sigma, (double) 1 / p);
 
-	 //System.out.println(lPDistance);
+		//System.out.println(lPDistance);
 
-	 return lPDistance;
+		return lPDistance;
 
- }
-
-
-
- /**
-  * Returns the L infinity distance between 2 instances.
-  * @param one
-  * @param two
-  * @return
-  */
-
- private double lInfinityDistance(Instance one, Instance two) {
-
-  double max = 0;
-
-  int dimension = one.numAttributes() - 1;
-
-  for (int i = 1; i < dimension; i++) {
-
-   double tmp = Math.abs(one.value(i) - two.value(i));
-
-   if (max < tmp)
-
-    max = tmp;
-
-  }
-
-  return max;
-
- }
+	}
 
 
 
- /**
-  * Returns the Lp distance between 2 instances, while using an efficient distance check.
-  * @param one
-  * @param two
-  * @return
-  */
+	/**
+	 * Returns the L infinity distance between 2 instances.
+	 * @param one
+	 * @param two
+	 * @return
+	 */
 
- private double efficientLpDistance(Instance one, Instance two, double p) {
-	 
-	 double threshold = Double.MAX_VALUE;
-     double sigma = 0;
-	 int dimension = one.numAttributes() - 1;
+	private double lInfinityDistance(Instance one, Instance two) {
 
-     for (int i = 0; i < dimension; i++) {
-         sigma += Math.pow(Math.abs(one.value(i) - two.value(i)), p);
-         if(sigma > threshold){
-             break;
-         }
-     }
-     sigma = Math.pow(sigma, (1.0 / p));
-     return sigma;
- }
+		double max = 0;
+
+		int dimension = one.numAttributes() - 1;
+
+		for (int i = 1; i < dimension; i++) {
+
+			double tmp = Math.abs(one.value(i) - two.value(i));
+
+			if (max < tmp)
+				max = tmp;
+		}
+
+		return max;
+	}
 
 
 
- /**
-  * Returns the Lp distance between 2 instances, while using an efficient distance check.
-  * @param one
-  * @param two
-  * @return
-  */
+	/**
+	 * Returns the Lp distance between 2 instances, while using an efficient distance check.
+	 * @param one
+	 * @param two
+	 * @return
+	 */
 
- private double efficientLInfinityDistance(Instance one, Instance two) {
+	private double efficientLpDistance(Instance one, Instance two, double p) {
 
-	  double threshold = Double.MAX_VALUE;
-	  double sigma = 0;
-	  int dimension = one.numAttributes() - 1;
-	  
-	  
-     for (int i = 0; i < dimension; i++) {
-   	  double diff = Math.abs((one.value(i) - two.value(i)));
-         if (diff > 0)
-             sigma = diff;
-         if(sigma > threshold) {
-             break;
-         }
-     } 
-     
-     return sigma;
+		double threshold = Double.MAX_VALUE;
+		double sigma = 0;
+		int dimension = one.numAttributes() - 1;
 
- }
+		for (int i = 0; i < dimension; i++) {
+			sigma += Math.pow(Math.abs(one.value(i) - two.value(i)), p);
+			if(sigma > threshold){
+				break;
+			}
+		}
+		sigma = Math.pow(sigma, (1.0 / p));
+		return sigma;
+	}
+
+
+
+	/**
+	 * Returns the Lp distance between 2 instances, while using an efficient distance check.
+	 * @param one
+	 * @param two
+	 * @return
+	 */
+
+	private double efficientLInfinityDistance(Instance one, Instance two) {
+
+		double threshold = Double.MAX_VALUE;
+		double sigma = 0;
+		int dimension = one.numAttributes() - 1;
+
+
+		for (int i = 0; i < dimension; i++) {
+			double diff = Math.abs((one.value(i) - two.value(i)));
+			if (diff > 0)
+				sigma = diff;
+			if(sigma > threshold) {
+				break;
+			}
+		} 
+
+		return sigma;
+
+	}
 
 }
 
@@ -145,111 +142,107 @@ class DistanceCalculator {
 
 public class Knn implements Classifier {
 
+	public enum DistanceCheck {
+		Regular,
+		Efficient
+	}
 
+	public enum WeightingScheme {
+		Uniform,
+		Weighted
+	}
 
- public enum DistanceCheck {
-  Regular,
-  Efficient
- }
+	private Instances m_trainingInstances;
 
- public enum WeightingScheme {
-  Uniform,
-  Weighted
- }
+	private double m_k;
 
- private Instances m_trainingInstances;
+	private double m_p;
 
- private double m_k;
-
- private double m_p;
-
- private WeightingScheme m_WeightingScheme;
-
-
-
- public void setInstances(Instances dataSet) {
-
-  m_trainingInstances = dataSet;
-
- }
+	private WeightingScheme m_WeightingScheme;
 
 
 
- public void setK(double i_k) {
+	public void setInstances(Instances dataSet) {
 
-  m_k = i_k;
+		m_trainingInstances = dataSet;
 
- }
-
-
-
- public void setP(double i_p) {
-
-  m_p = i_p;
-
- }
+	}
 
 
 
- public void setWeightingScheme(WeightingScheme i_WeightingScheme) {
+	public void setK(double i_k) {
 
-  m_WeightingScheme = i_WeightingScheme;
+		m_k = i_k;
 
- }
-
-
-
- @Override
-
- /**
-  * Build the knn classifier. In our case, simply stores the given instances for
-  * later use in the prediction.
-  * @param instances
-  */
-
- public void buildClassifier(Instances instances) throws Exception {
+	}
 
 
 
- }
+	public void setP(double i_p) {
+
+		m_p = i_p;
+
+	}
 
 
 
- /**
-  * Returns the knn prediction on the given instance.
-  * @param instance
-  * @return The instance predicted value.
-  */
+	public void setWeightingScheme(WeightingScheme i_WeightingScheme) {
 
- public double regressionPrediction(Instance instance) {
+		m_WeightingScheme = i_WeightingScheme;
+
+	}
 
 
 
-  if (m_WeightingScheme.equals(WeightingScheme.Uniform)) {
+	@Override
 
-   return getAverageValue(m_trainingInstances, instance);
+	/**
+	 * Build the knn classifier. In our case, simply stores the given instances for
+	 * later use in the prediction.
+	 * @param instances
+	 */
 
-  } else {
-
-   return getWeightedAverageValue(m_trainingInstances, instance);
-
-  }
-
- }
+	public void buildClassifier(Instances instances) throws Exception {
 
 
 
- /**
-  * Caclcualtes the average error on a give set of instances.
-  * The average error is the average absolute error between the target value and the predicted
-  * value across all insatnces.
-  * @param insatnces
-  * @return
-  */
+	}
 
- public double calcAvgError(Instances instances) {
+
+
+	/**
+	 * Returns the knn prediction on the given instance.
+	 * @param instance
+	 * @return The instance predicted value.
+	 */
+
+	public double regressionPrediction(Instance instance) {
+
+		if (m_WeightingScheme.equals(WeightingScheme.Uniform)) {
+
+			return getAverageValue(m_trainingInstances, instance);
+
+		} else {
+
+			return getWeightedAverageValue(m_trainingInstances, instance);
+
+		}
+
+	}
+
+
+
+	/**
+	 * Caclcualtes the average error on a give set of instances.
+	 * The average error is the average absolute error between the target value and the predicted
+	 * value across all insatnces.
+	 * @param insatnces
+	 * @return
+	 */
+
+	public double calcAvgError(Instances instances) {
 		double totalAmountOfMistakes = 0;
-		
+
 		for (int i = 0; i < instances.numInstances(); i++) {
 			if(this.classifyInstance(instances.get(i)) != instances.get(i).classValue()){
 				totalAmountOfMistakes++;
@@ -257,181 +250,181 @@ public class Knn implements Classifier {
 		}
 
 		return totalAmountOfMistakes / instances.numInstances();
- }
+	}
 
 
 
- /**
-  * Calculates the cross validation error, the average error on all folds.
-  * @param insances Insances used for the cross validation
-  * @param num_of_folds The number of folds to use.
-  * @return The cross validation error.
-  */
+	/**
+	 * Calculates the cross validation error, the average error on all folds.
+	 * @param insances Insances used for the cross validation
+	 * @param num_of_folds The number of folds to use.
+	 * @return The cross validation error.
+	 */
 
- public double crossValidationError(Instances instances, int num_of_folds) {
+	public double crossValidationError(Instances instances, int num_of_folds) {
 
 		Random random = new Random();
 		instances.randomize(random);
 		double sumOfErrors = 0;
 		Instances[] folds = GetFolds(instances, num_of_folds); 
-		
-		
+
+
 		for(int i = 0; i < folds.length; i++){
-			
+
 			Instances validationSet = folds[i];
 			Instances trainingSet = new Instances(instances , 0 ,0);
-			
+
 			for (int j = 0; j < folds.length; j++) {
 				if( j != i){
 					trainingSet.addAll(folds[j]);
 				} 
 			}
-		
-			
+
+
 			m_trainingInstances = trainingSet;
 			double averageErrorOfCurrentFolds = this.calcAverageError(validationSet);
-		
+
 			sumOfErrors += averageErrorOfCurrentFolds;
-			
+
 		}
-		
+
 		sumOfErrors /= num_of_folds;
 
 		return sumOfErrors;
 
- }
-
-
-
-
-
- /**
-  * Finds the k nearest neighbors.
-  * @param instance
-  */
-
- public Instances findNearestNeighbors(Instance instance) {
-
-    Instances instances = new Instances(m_trainingInstances);
-
-    Instances allInstances = new Instances(this.m_trainingInstances.numInstances());
-	
-	for (int i = 0; i < allInstances.length; i++) {
-		
-		allInstances.add(i, this.m_trainingInstances.get(i));
-		
-	}
-	
-	double[] distances = new double[m_trainingInstances.numInstances()];
-	
-	if( m_k > m_trainingInstances.numInstances() ){
-		return allInstances; 
 	}
 
-	for (int i = 0; i < m_trainingInstances.numInstances(); i++) {
-		double currentDistance = distance( i_Instance , m_trainingInstances.get(i));
-		distances[i] = currentDistance;
+
+
+
+
+	/**
+	 * Finds the k nearest neighbors.
+	 * @param instance
+	 */
+
+	public Instances findNearestNeighbors(Instance instance) {
+
+		Instances instances = new Instances(m_trainingInstances);
+
+		Instances allInstances = new Instances(this.m_trainingInstances.numInstances());
+
+		for (int i = 0; i < allInstances.length; i++) {
+
+			allInstances.add(i, this.m_trainingInstances.get(i));
+
+		}
+
+		double[] distances = new double[m_trainingInstances.numInstances()];
+
+		if( m_k > m_trainingInstances.numInstances() ){
+			return allInstances; 
+		}
+
+		for (int i = 0; i < m_trainingInstances.numInstances(); i++) {
+			double currentDistance = distance( i_Instance , m_trainingInstances.get(i));
+			distances[i] = currentDistance;
+		}
+
+		sortArray(distances , allInstances );
+
+		for (int i = 0; i < neighbors.length; i++) {
+			instances.add(i, allInstances.get(i));
+		}
+
+		return instances;
+
 	}
-	
-	sortArray(distances , allInstances );
-	
-	for (int i = 0; i < neighbors.length; i++) {
-		instances.add(i, allInstances.get(i));
+
+
+
+	/**
+	 * Cacluates the average value of the given elements in the collection.
+	 * @param
+	 * @return
+	 */
+
+	public double getAverageValue(Instances dataSet) {
+
+		return dataSet.meanOrMode(dataSet.classAttribute());
+
 	}
-	
-  return instances;
-
- }
 
 
 
- /**
-  * Cacluates the average value of the given elements in the collection.
-  * @param
-  * @return
-  */
+	/**
+	 * Calculates the weighted average of the target values of all the elements in the collection
+	 * with respect to their distance from a specific instance.
+	 * @return
+	 */
 
- public double getAverageValue(Instances dataSet) {
+	public double getWeightedAverageValue(Instances dataSet, Instance instance) {
 
-  return dataSet.meanOrMode(dataSet.classAttribute());
+		double avg = 0;
+		DistanceCalculator d_C = new DistanceCalculator();
 
- }
+		double distance = 0;
+		double sumOfDistances = 0;
+		double sumOfWeights = 0;
+		double w_i = 0;
 
+		for (int i = 0; i < dataSet.numInstances(); i++) {
+			Instance neighbor = dataSet.get(i);
 
-
- /**
-  * Calculates the weighted average of the target values of all the elements in the collection
-  * with respect to their distance from a specific instance.
-  * @return
-  */
-
- public double getWeightedAverageValue(Instances dataSet, Instance instance) {
-
-     double avg = 0;
-     DistanceCalculator d_C = new DistanceCalculator();
-     
-     double distance = 0;
-     double sumOfDistances = 0;
-     double sumOfWeights = 0;
-     double w_i = 0;
-     
-     for (int i = 0; i < dataSet.numInstances(); i++) {
-    	 Instance neighbor = dataSet.get(i);
-    	 
-         distance = distanceCalculator.distance(neighbor, instance, distanceMethod);
-         if (distance == 0) {
-             return neighbor.classValue();
-         }
-         w_i = 1.0 / Math.pow(distance, 2);
-         if (w_i > 0) {
-             sumOfDistances += w_i;
-             sumsumOfWeights += w_i * neighbor.classValue();
-         }
-     }
-     average = sumsumOfWeights / sumOfDistances;
-     return average;
- }
+			distance = distanceCalculator.distance(neighbor, instance, distanceMethod);
+			if (distance == 0) {
+				return neighbor.classValue();
+			}
+			w_i = 1.0 / Math.pow(distance, 2);
+			if (w_i > 0) {
+				sumOfDistances += w_i;
+				sumsumOfWeights += w_i * neighbor.classValue();
+			}
+		}
+		average = sumsumOfWeights / sumOfDistances;
+		return average;
+	}
 
 
 
 
 
- @Override
+	@Override
 
- public double[] distributionForInstance(Instance arg0) throws Exception {
+	public double[] distributionForInstance(Instance arg0) throws Exception {
 
-  // TODO Auto-generated method stub - You can ignore.
+		// TODO Auto-generated method stub - You can ignore.
 
-  return null;
+		return null;
 
- }
-
-
-
- @Override
-
- public Capabilities getCapabilities() {
-
-  // TODO Auto-generated method stub - You can ignore.
-
-  return null;
-
- }
+	}
 
 
 
- @Override
+	@Override
 
- public double classifyInstance(Instance instance) {
+	public Capabilities getCapabilities() {
 
-  // TODO Auto-generated method stub - You can ignore.
+		// TODO Auto-generated method stub - You can ignore.
 
-  return 0.0;
+		return null;
 
- }
- 
-private void sortArray(double[] dist , Instances instances) {
-		
+	}
+
+
+
+	@Override
+
+	public double classifyInstance(Instance instance) {
+
+		// TODO Auto-generated method stub - You can ignore.
+
+		return 0.0;
+
+	}
+
+	private void sortArray(double[] dist , Instances instances) {
+
 		double temp = 0;
 		for (int i = 0; i < dist.length; i++) {
 			for (int j = 1; j < dist.length - i; j++) {
@@ -448,5 +441,4 @@ private void sortArray(double[] dist , Instances instances) {
 			}
 		}
 	}
-
 }

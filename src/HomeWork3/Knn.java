@@ -1,6 +1,5 @@
 
-package HomeWork3;
-
+import java.util.Random;
 
 import weka.classifiers.Classifier;
 
@@ -17,16 +16,26 @@ class DistanceCalculator {
 	 * parameters(lp, efficient, etc..) or have it has a class variables.
 	 */
 
-	public double distance(Instance one, Instance two, double p) {
+	public double distance(Instance one, Instance two, double p, knn.DistanceCheck distanceCheck) {
+		if(distanceCheck == knn.DistanceCheck.Regular){
+			if (Double.isInfinite(p)) {
 
-		if (Double.isInfinite(p)) {
+				return lInfinityDistance(one, two);
+			} else {
+				return lpDistance(one, two, p);
 
-			return lInfinityDistance(one, two);
-		} else {
-			return lpDistance(one, two, p);
-
+			}
 		}
 
+		if(distanceCheck == knn.DistanceCheck.Efficient){
+			if (Double.isInfinite(p)) {
+
+				return efficientLInfinityDistance(one, two);
+			} else {
+				return efficientLpDistance(one, two, p);
+
+			}
+		}
 	}
 
 
@@ -220,7 +229,7 @@ public class Knn implements Classifier {
 
 		if (m_WeightingScheme.equals(WeightingScheme.Uniform)) {
 
-			return getAverageValue(m_trainingInstances, instance);
+			return getAverageValue(m_trainingInstances);
 
 		} else {
 
@@ -282,7 +291,7 @@ public class Knn implements Classifier {
 
 
 			m_trainingInstances = trainingSet;
-			double averageErrorOfCurrentFolds = this.calcAverageError(validationSet);
+			double averageErrorOfCurrentFolds = this.calcAvgError(validationSet);
 
 			sumOfErrors += averageErrorOfCurrentFolds;
 
@@ -294,7 +303,18 @@ public class Knn implements Classifier {
 
 	}
 
-
+	private Instances[] GetFolds(Instances i_Data , int i_NumOfFolds){
+		
+		Instances[] folds = new Instances[i_NumOfFolds];
+		//Instances empty = new Instances(i_Data , 0 ,0);
+		for (int i = 0; i < folds.length; i++) {
+			folds[i] =  new Instances(i_Data , 0 ,0);
+		}
+		for (int i = 0; i < i_Data.numInstances(); i++) {
+			folds[ i % i_NumOfFolds ].add(i_Data.instance(i));
+		}
+		return folds;
+	}
 
 
 
@@ -307,9 +327,11 @@ public class Knn implements Classifier {
 
 		Instances instances = new Instances(m_trainingInstances);
 
-		Instances allInstances = new Instances(this.m_trainingInstances.numInstances());
+		Instances allInstances = new Instances(m_trainingInstances);
+		
+		DistanceCalculator d_c = new DistanceCalculator();
 
-		for (int i = 0; i < allInstances.length; i++) {
+		for (int i = 0; i < allInstances.size(); i++) {
 
 			allInstances.add(i, this.m_trainingInstances.get(i));
 
@@ -322,13 +344,13 @@ public class Knn implements Classifier {
 		}
 
 		for (int i = 0; i < m_trainingInstances.numInstances(); i++) {
-			double currentDistance = distance( i_Instance , m_trainingInstances.get(i));
+			double currentDistance = d_c.distance(instance , m_trainingInstances.get(i), m_p);
 			distances[i] = currentDistance;
 		}
 
 		sortArray(distances , allInstances );
 
-		for (int i = 0; i < neighbors.length; i++) {
+		for (int i = 0; i < instances.size(); i++) {
 			instances.add(i, allInstances.get(i));
 		}
 
@@ -367,22 +389,24 @@ public class Knn implements Classifier {
 		double sumOfDistances = 0;
 		double sumOfWeights = 0;
 		double w_i = 0;
+		
+		DistanceCalculator d_c = new DistanceCalculator();
 
 		for (int i = 0; i < dataSet.numInstances(); i++) {
 			Instance neighbor = dataSet.get(i);
 
-			distance = distanceCalculator.distance(neighbor, instance, distanceMethod);
+			distance = d_c.distance(neighbor, instance, m_p);
 			if (distance == 0) {
 				return neighbor.classValue();
 			}
 			w_i = 1.0 / Math.pow(distance, 2);
 			if (w_i > 0) {
 				sumOfDistances += w_i;
-				sumsumOfWeights += w_i * neighbor.classValue();
+				sumOfWeights += w_i * neighbor.classValue();
 			}
 		}
-		average = sumsumOfWeights / sumOfDistances;
-		return average;
+		avg = sumOfWeights / sumOfDistances;
+		return avg;
 	}
 
 

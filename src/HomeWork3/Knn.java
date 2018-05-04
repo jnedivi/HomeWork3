@@ -101,20 +101,18 @@ class DistanceCalculator {
 
  private double efficientLpDistance(Instance one, Instance two, double p) {
 	 
-	 double sigma = 0;
+	 double threshold = Double.MAX_VALUE;
+     double sigma = 0;
 	 int dimension = one.numAttributes() - 1;
-	 //double threshold = Double.MAX_VALUE;
-	 
-	 for (int i=0; i < dimension; i++) {
-		   sigma += Math.abs(Math.pow((one.value(i) - two.value(i)), p));
-		   
-		   if (sigma > Math.pow((one.value(i)-two.value(i)), p))
-			   break;
-	 }
-	 
-	 
-	  double EfflPDistance = Math.pow(sigma, (double) 1 / p);
-	  return EfflPDistance;
+
+     for (int i = 0; i < dimension; i++) {
+         sigma += Math.pow(Math.abs(one.value(i) - two.value(i)), p);
+         if(sigma > threshold){
+             break;
+         }
+     }
+     sigma = Math.pow(sigma, (1.0 / p));
+     return sigma;
  }
 
 
@@ -128,7 +126,21 @@ class DistanceCalculator {
 
  private double efficientLInfinityDistance(Instance one, Instance two) {
 
-  return 0.0;
+	  double threshold = Double.MAX_VALUE;
+	  double sigma = 0;
+	  int dimension = one.numAttributes() - 1;
+	  
+	  
+     for (int i = 0; i < dimension; i++) {
+   	  double diff = Math.abs((one.value(i) - two.value(i)));
+         if (diff > 0)
+             sigma = diff;
+         if(sigma > threshold) {
+             break;
+         }
+     } 
+     
+     return sigma;
 
  }
 

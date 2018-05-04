@@ -28,20 +28,26 @@ public class MainHW3 {
 		return data;
 	}
 	
-	public static double[] bestHyperParamaters(Instances dataSet) throws Exception{
+	public static double[] findBestHyperParamaters(Instances dataSet) throws Exception{
 		
-		double kValue = 0;
-		double lpDist = Double.MAX_VALUE;
-		double weightIndex = 0;
-		double crossValidationError = Double.MAX_VALUE;
+		double bestK = 0;
+		double bestLpDist = Double.MAX_VALUE;
+		double bestWeightIndex = 0;
+		double bestCrossValidationError = Double.MAX_VALUE;
 		double [] lpValues = {1, 2, 3, Double.POSITIVE_INFINITY};
 		String[] weightingSchemes = {"Uniform", "Weighted"};
+		Knn knn = new Knn();
+		knn.setInstances(dataset);
 		
 		for(int k = 1; k < 21; k++){
-			for(int i = 0; i < lpValues.length; i++){
-				double currentLpDistance = lpValues[i];
+			for(int p = 0; p < lpValues.length; i++){
+				double currentbestLpDistance = lpValues[i];
 				for(int j = 0; j < weightingSchemes.length; j++){
-					Knn knn = new Knn();
+					
+					knn.setK(k);
+					knn.setWeightingScheme(weightingSchemes[j]);
+					knn.setP(lpValues[p]);
+					
 					
 				}
 			}
@@ -52,10 +58,12 @@ public class MainHW3 {
         //TODO: complete the Main method
 		Instances trainingData = loadData("auto_price.txt");
 		trainData.randomize(new Random());
+		double[] unscaledResults = findBestHyperParamaters(trainingData);
 		
 		// first we scale the data
 		FeatureScaler featureScaler = new FeatureScaler();
 		trainingData  = featureScaler.scaleData(trainingData);
+		double[] scaledResults = findBestHyperParamaters(trainingData);
 		
 		
 		

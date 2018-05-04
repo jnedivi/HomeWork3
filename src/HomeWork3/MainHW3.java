@@ -35,7 +35,7 @@ public class MainHW3 {
 		double bestWeightIndex = 0;
 		double bestCrossValidationError = Double.MAX_VALUE;
 		double [] lpValues = {1, 2, 3, Double.POSITIVE_INFINITY};
-		String[] weightingSchemes = {"Uniform", "Weighted"};
+		// String[] weightingSchemes = {"Uniform", "Weighted"};
 		// String[] lpMethod = {"Regular" , "Efficient"};
 		int numberOfFolds = 10;
 		
@@ -47,9 +47,12 @@ public class MainHW3 {
 				
 				double currentLpDistance = lpValues[p];
 				double 
-				for(int j = 0; j < weightingSchemes.length; j++){
+				for(int j = 0; j < 2; j++){
 					
 					knn.setK(k);
+					if(j==0){
+						knn.setWeightingScheme();
+					}
 					knn.setWeightingScheme(weightingSchemes[j]);
 					knn.setP(currentLpDistance);
 					knn.set

@@ -168,6 +168,8 @@ public class Knn implements Classifier {
 	private double m_p;
 
 	private WeightingScheme m_WeightingScheme;
+	
+	private DistanceCheck m_DistanceCheck;
 
 
 
@@ -200,7 +202,12 @@ public class Knn implements Classifier {
 		m_WeightingScheme = i_WeightingScheme;
 
 	}
-
+	
+	public void setDistanceCheck(DistanceCheck i_DistanceCheck){
+		
+		m_DistanceCheck = i_DistanceCheck;
+		
+	}
 
 
 	@Override
